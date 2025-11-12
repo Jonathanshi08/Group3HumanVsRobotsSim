@@ -1,13 +1,10 @@
 import greenfoot.*;
 import java.util.ArrayList;
 
-public class RockThrower extends Human {
-    private int cooldown = 0;
-    private static final int DELAY = 60;
-    private boolean isAttacking = false;
+public class RangedHuman extends Human {
 
-    public RockThrower(int health, double speed, int range, int damage) {
-        super(health, speed, range, damage);
+    public RangedHuman(int health, double speed, int range, int damage, int delay) {
+        super(health, speed, range, damage, delay);
     }
 
     public void act() {

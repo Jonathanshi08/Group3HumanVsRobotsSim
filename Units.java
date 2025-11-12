@@ -10,16 +10,20 @@ public abstract class Units extends SuperSmoothMover
     protected boolean isRobot;
     protected static int numUnits;
     protected int range;
+    protected int delay;
+    protected double originalSpeed;
+    protected int cooldown;
 
     protected SuperStatBar healthBar;
     
-    public Units(int health, double speed, int range, int damage, boolean isRobot){
+    public Units(int health, double speed, int range, int damage, int delay, boolean isRobot){
         this.health = health;
         this.maxHealth = health; 
         this.speed = speed;
         this.range = range;
         this.damage = damage;
         this.isRobot = isRobot;
+        this.delay = delay;
         numUnits++;
     }
 

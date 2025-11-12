@@ -1,7 +1,7 @@
 #BlueJ class context
 comment0.target=Units
-comment1.params=health\ speed\ range\ damage\ isRobot
-comment1.target=Units(int,\ double,\ int,\ int,\ boolean)
+comment1.params=health\ speed\ range\ damage\ delay\ isRobot
+comment1.target=Units(int,\ double,\ int,\ int,\ int,\ boolean)
 comment10.params=world
 comment10.target=void\ addedToWorld(greenfoot.World)
 comment11.params=a

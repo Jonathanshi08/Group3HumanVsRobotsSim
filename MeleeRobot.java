@@ -1,13 +1,11 @@
 import greenfoot.*;
 import java.util.ArrayList;
 
-public class TinyRobot extends Robot {
+public class MeleeRobot extends Robot {
     private int cooldown = 0;
-    
-    private static final int DELAY = 60;
 
-    public TinyRobot(int health, double speed, int range, int damage) {
-        super(health, speed, range, damage);
+    public MeleeRobot(int health, double speed, int range, int damage, int delay) {
+        super(health, speed, range, damage, delay);
     }
 
     public void act() {

@@ -6,7 +6,7 @@ public class ExplodingRobot extends Robot {
     private int detectionRange = 300;
 
     public ExplodingRobot(int health, double speed, int range, int damage) {
-        super(health, speed, range, damage);
+        super(health, speed, range, damage, 9999);
     }
 
     public void act() {
