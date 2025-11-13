@@ -14,6 +14,9 @@ public class MyWorld extends World {
     public MyWorld() {    
         super(1240, 700, 1); 
         setBackground(background);
+        
+        Units.setHumanCash(0);
+        Units.setRobotCash(0);
 
         testPrepare();
 

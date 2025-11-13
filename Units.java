@@ -128,11 +128,11 @@ public abstract class Units extends SuperSmoothMover {
         return robotCash;
     }
 
-    public static void addHumanCash(int amount) {
-        humanCash += amount;
+    public static void setHumanCash(int amount) {
+        humanCash = amount;
     }
 
-    public static void addRobotCash(int amount) {
-        robotCash += amount;
+    public static void setRobotCash(int amount) {
+        robotCash = amount;
     }
 }
