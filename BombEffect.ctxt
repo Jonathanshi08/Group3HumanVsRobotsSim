@@ -1,0 +1,12 @@
+#BlueJ class context
+comment0.target=BombEffect
+comment1.params=
+comment1.target=BombEffect()
+comment2.params=
+comment2.target=void\ act()
+comment3.params=
+comment3.target=void\ createBlinkingEffect()
+comment4.params=
+comment4.target=void\ explode()
+comment4.text=private\ void\ playTickingSound()\r\n\ \ \ \ {\r\n\ \ \ \ \ \ \ \ if\ (\!tickingStarted)\ {\r\n\ \ \ \ \ \ \ \ \ \ \ \ bombticking.setVolume(60);\r\n\ \ \ \ \ \ \ \ \ \ \ \ bombticking.playLoop();\r\n\ \ \ \ \ \ \ \ \ \ \ \ tickingStarted\ \=\ true;\r\n\ \ \ \ \ \ \ \ }\r\n}
+numComments=5

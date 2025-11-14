@@ -19,13 +19,15 @@ public class Projectile extends SuperSmoothMover
     
     public void act()
     {
+        checkEdges();
         if(getWorld() == null)
         {
             return;
         }
         timer++;
         move();
-        checkCollision();
+        
+        checkCollision();  // <-- remove if off-screen
         //dissapear();
     }
     
@@ -33,15 +35,11 @@ public class Projectile extends SuperSmoothMover
     {
         if(timer %  2 == 0)
         {
-            if(transparency < 0)
-            {
-                transparency = 0;
-            }
+            if(transparency < 0) transparency = 0;
             else if(transparency > 0)
             {
-                speed += .5;
+                speed += 0.5;
                 transparency -= 7;
-        
             }
         }
         
@@ -53,31 +51,30 @@ public class Projectile extends SuperSmoothMover
         {
             getImage().setTransparency(transparency);
         }
-    
     }
     
     private void move()
     {
-        if(timer %  20 == 0 )
-        {
-            speed += 1.5;
-        }
-        
-        setLocation(getX() + speed,getY());
-        
+        if(timer %  20 == 0 ) speed += 1.5;
+        setLocation(getX() + speed, getY());
     }
     
     private void checkCollision()
     {
-        //InfantryMen menHit = (InfantryMen)getOneIntersectingObject(InfantryMen.class);
         Fences buildingHit = (Fences)getOneIntersectingObject(Fences.class);
-        
         if(buildingHit != null)
         {
-            getWorld().removeObject(this);
             buildingHit.damage(500);
+            getWorld().removeObject(this);
         }
     }
     
-    
+    // Remove projectile if it goes off-screen
+    private void checkEdges()
+    {
+        if(getX() < 0 || getX() > getWorld().getWidth()-10)
+        {
+            getWorld().removeObject(this);
+        }
+    }
 }

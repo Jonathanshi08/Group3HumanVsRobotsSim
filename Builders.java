@@ -11,7 +11,7 @@ public class Builders extends SuperSmoothMover {
 
     public Builders() {
         //when the builder is spawned he will have a bar indicating his progress
-        workProgressBar = new SuperStatBar(maxFences, 0, this, 50, 6, -40, Color.GREEN, Color.RED);
+        workProgressBar = new SuperStatBar(maxFences, 0, this, 50, 6, -40, Color.BLUE, Color.YELLOW);
     }
 
     public void addedToWorld(World world) {
@@ -29,6 +29,7 @@ public class Builders extends SuperSmoothMover {
         if (fenceCount >= maxFences) 
         {
             getWorld().removeObject(workProgressBar);
+            Fences.buildComplete(getWorld());
             return;
         }
         
