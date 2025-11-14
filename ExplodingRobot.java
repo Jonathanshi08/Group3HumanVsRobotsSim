@@ -15,14 +15,15 @@ public class ExplodingRobot extends Robot {
     private int animationDelay = 8; 
     private int frameCounter = 0;
 
-    public ExplodingRobot(int health, double speed, int range, int damage) {
-        super(health, speed, range, damage, 9999);
+    public ExplodingRobot(int health, double speed, int range, int damage, int delay, int value) {
+        super(health, speed, range, damage, delay, value);
         
         this.speed = speed;
-        this.rushSpeed = 2.5*speed;
+        this.rushSpeed = 2.5 * speed;
         loadWalkFrames();
         setImage(walkFrames[0]);
     }
+
 
     public void act() {
         if (getWorld() == null) return;

@@ -1,55 +1,47 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
-public class MyWorld extends World
-{
+
+public class MyWorld extends World {
     GreenfootImage background = new GreenfootImage("images/background.png");
     public static int topEdge = 275;
-    
-    public MyWorld()
-    {    
-        super(1240,700, 1); 
+
+    // Text display images
+    private GreenfootImage humanCashImage;
+    private GreenfootImage robotCashImage;
+
+    // Positions for text
+    private int humanCashX, humanCashY;
+    private int robotCashX, robotCashY;
+
+    public MyWorld() {    
+        super(1240, 700, 1); 
+
         setBackground(background);
-        testPrepare();
 
+        Units.setHumanCash(0);
+        Units.setRobotCash(0);
+
+        //testPrepare();
+
+        // Set text positions (bottom corners)
+        humanCashX = getWidth() - 250;
+        humanCashY = getHeight() - 40;
+        robotCashX = 30;
+        robotCashY = getHeight() - 40;
     }
-        private void testPrepare() {
-        /*for (int i = 0; i < 5; i++) {
-            RangedHuman rockThrower = new RangedHuman(100, 1.5, 200, 10, 100);
-            int x = Greenfoot.getRandomNumber(getWidth() / 2);
-            int y = Greenfoot.getRandomNumber(getHeight() - topEdge) + topEdge; // ensures it spawns below topEdge
-            addObject(rockThrower, x, y);
-        }*/
 
-        for (int i = 0; i < 1; i++) {
-            ExplodingRobot er = new ExplodingRobot(80, 1.2, 150, 50);
-            int x = Greenfoot.getRandomNumber(getWidth() / 2);
-            int y = Greenfoot.getRandomNumber(getHeight() - topEdge) + topEdge; // ensures it spawns below topEdge
-            addObject(er, x, y);
-        }
-
-        /*/
-        for (int i = 0; i < 3; i++) {
-            MeleeHuman rockSmasher = new MeleeHuman(150, 1.0, 75, 20, 10);
-            addObject(rockSmasher, Greenfoot.getRandomNumber(getWidth() / 2) + getWidth()/2, Greenfoot.getRandomNumber(getHeight()));
-        }
-        for (int i = 0; i < 3; i++) {
-            MeleeRobot tinyRobot = new MeleeRobot(150, 1.0, 75, 20, 50);
-            addObject(tinyRobot, Greenfoot.getRandomNumber(getWidth() / 2), Greenfoot.getRandomNumber(getHeight()));
-        }*/
-    
-    
-        Builders men = new Builders();
-        addObject(men, getWidth()/2, getHeight()/4);
-        
-        Turret turret = new Turret();
-        addObject(turret, 100 , getHeight()/2+100);
-        
-        setPaintOrder(
-            SuperStatBar.class,  // Always on top
-            Fences.class,
-            Builders.class,
-            Actor.class          // everything else
-        );
+    public void act() {
+        updateCashDisplay();
     }
-    
-    
+
+    private void updateCashDisplay() {
+        GreenfootImage frame = getBackground();
+        frame.drawImage(background, 0, 0); // redraw background
+
+        humanCashImage = new GreenfootImage("Human Cash: " + Units.getHumanCash(), 24, Color.WHITE, new Color(0, 0, 0, 150));
+        robotCashImage = new GreenfootImage("Robot Cash: " + Units.getRobotCash(), 24, Color.WHITE, new Color(0, 0, 0, 150));
+
+        frame.drawImage(robotCashImage, robotCashX, robotCashY);
+        frame.drawImage(humanCashImage, humanCashX, humanCashY);
+    }
 }
+
