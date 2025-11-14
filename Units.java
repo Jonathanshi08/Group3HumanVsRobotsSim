@@ -48,6 +48,9 @@ public abstract class Units extends SuperSmoothMover {
     public double getSpeed() {
         return speed;
     }
+    public int getRange(){
+        return range;
+    }
 
     public void takeDamage(int dmg) {
         health -= dmg;

@@ -3,8 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExplodingRobot extends Robot {
-    private int explosionRadius = 100;
-    private int detectionRange = 300;
+    private int detectionRange;
     
     private double speed;
     private double rushSpeed;
@@ -17,8 +16,7 @@ public class ExplodingRobot extends Robot {
 
     public ExplodingRobot(int health, double speed, int range, int damage, int delay, int value) {
         super(health, speed, range, damage, delay, value);
-        
-        this.speed = speed;
+        this.detectionRange = range*2;
         this.rushSpeed = 2.5 * speed;
         loadWalkFrames();
         setImage(walkFrames[0]);
@@ -38,7 +36,7 @@ public class ExplodingRobot extends Robot {
         if (closest != null) {
             double dist = getDistanceTo(closest);
 
-            if (dist <= explosionRadius) {
+            if (dist <= range) {
                 explode();
                 return;
             }
