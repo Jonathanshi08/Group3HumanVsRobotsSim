@@ -1,9 +1,8 @@
 import greenfoot.*;
-import java.util.ArrayList;
 
-public class RangedHuman extends Human {
+public class RangedRobot extends Robot {
 
-    public RangedHuman(int health, double speed, int range, int damage, int delay, int value) {
+    public RangedRobot(int health, double speed, int range, int damage, int delay, int value) {
         super(health, speed, range, damage, delay, value);
     }
 
@@ -11,7 +10,7 @@ public class RangedHuman extends Human {
         super.act();
     }
 
-    private void spawnProjectile(Robot target) {
+    private void spawnProjectile(Human target) {
         Projectile p = new Projectile(getSpeed());
         getWorld().addObject(p, getX(), getY());
     }
