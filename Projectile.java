@@ -5,12 +5,16 @@ public class Projectile extends SuperSmoothMover
     private double speed;
     private double angle;
     private int damage;
+    private Owner owner; // Who fired the projectile
 
-    public Projectile(double speed, double angle, int damage)
+    public enum Owner { HUMAN, ROBOT }
+
+    public Projectile(double speed, double angle, int damage, Owner owner)
     {
         this.speed = speed;
         this.angle = angle;
         this.damage = damage;
+        this.owner = owner;
 
         setRotation((int)angle);
     }
@@ -36,21 +40,31 @@ public class Projectile extends SuperSmoothMover
     {
         if (getWorld() == null) return;
 
-        // Check Fences
+        // All projectiles hit fences
         Fences fenceHit = (Fences)getOneIntersectingObject(Fences.class);
-        if (fenceHit != null)
-        {
+        if (fenceHit != null) {
             fenceHit.damage(damage);
             removeSelf();
             return;
         }
 
-        // Check Robots (any type)
-        Robot robotHit = (Robot)getOneIntersectingObject(Robot.class);
-        if (robotHit != null)
-        {
-            robotHit.takeDamage(damage);
-            removeSelf();
+        // Humans are hit only by Robot projectiles
+        if (owner == Owner.ROBOT) {
+            Human humanHit = (Human)getOneIntersectingObject(Human.class);
+            if (humanHit != null) {
+                humanHit.takeDamage(damage);
+                removeSelf();
+                return;
+            }
+        }
+
+        // Robots are hit only by Human projectiles
+        if (owner == Owner.HUMAN) {
+            Robot robotHit = (Robot)getOneIntersectingObject(Robot.class);
+            if (robotHit != null) {
+                robotHit.takeDamage(damage);
+                removeSelf();
+            }
         }
     }
 
@@ -59,20 +73,15 @@ public class Projectile extends SuperSmoothMover
         if (getWorld() == null) return;
 
         if (getX() < 0 || getX() > getWorld().getWidth() ||
-            getY() < 0 || getY() > getWorld().getHeight())
-        {
+            getY() < 0 || getY() > getWorld().getHeight()) {
             removeSelf();
         }
     }
 
     private void removeSelf()
     {
-        if (getWorld() != null)
-        {
+        if (getWorld() != null) {
             getWorld().removeObject(this);
         }
     }
 }
-
-
-

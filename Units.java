@@ -2,26 +2,40 @@ import greenfoot.*;
 import java.util.ArrayList;
 
 public abstract class Units extends SuperSmoothMover {
+    //tracks properties of the army
+    
+    //amount of health and maxhealth is used to see if the being is about to 
+    //die and helps to display infomation on the statbar
     protected int health;
     protected int maxHealth;
+    protected SuperStatBar healthBar;
+    
+    //how fast the robot can move across world
+    protected double originalSpeed;
     protected double speed;
+    
+    //damage it can inflict on enemy and the range it can attack at
+    protected int range;
     protected int damage;
+    
+    //tracks if it is a robot(helps to idenitfy which being to attack)
     protected boolean isRobot;
     protected static int numUnits;
-    protected int range;
-    protected int delay;
-    protected double originalSpeed;
-    protected int cooldown;
-    protected int value;
 
+    //helps with the timing
+    protected int delay;    
+    protected int cooldown;
+    
+    //manages the resource
+    protected int value;
     protected static int humanCash = 0;
     protected static int robotCash = 0;
 
-    protected SuperStatBar healthBar;
-
-    protected static final int MIN_PLAYABLE_Y = 175; // minimum Y for humans
+    //limits the units where they can be
+    public static final int MIN_PLAYABLE_Y = 175; // minimum y position 
 
     public Units(int health, double speed, int range, int damage, int delay, int value, boolean isRobot) {
+        //assign values to variables 
         this.health = health;
         this.maxHealth = health;
         this.speed = speed;
@@ -34,35 +48,40 @@ public abstract class Units extends SuperSmoothMover {
         this.originalSpeed = speed;
     }
 
-    @Override
+    
     protected void addedToWorld(World world) {
-        // Create HP bar for this unit
-        healthBar = new SuperStatBar(maxHealth, health, this, 40, 6, 30,
-                                     Color.GREEN, Color.RED, true, Color.BLACK, 1);
+        // create hp bar for each unit
+        healthBar = new SuperStatBar(maxHealth, health, this, 40, 6, 30,Color.GREEN, Color.RED, true, Color.BLACK, 1);
         world.addObject(healthBar, getX(), getY() - 20); // above the unit
     }
 
+    //returns the amount of health the being has
     public int getHealth() {
         return health;
     }
 
+    //sets the amount of health the being 
     public void setHealth(int hp) {
         this.health = hp;
         updateHealthBar();
     }
 
+    //checks if the being is a robot
     public boolean isRobot() {
         return isRobot;
     }
 
+    //returns speed of the being
     public double getSpeed() {
         return speed;
     }
 
+    //returns the range of the being
     public int getRange() {
         return range;
     }
 
+    //
     public void takeDamage(int dmg) {
         health -= dmg;
         updateHealthBar();
@@ -76,7 +95,7 @@ public abstract class Units extends SuperSmoothMover {
         }
     }
 
-    /** Keeps the health bar in sync with the unit’s current health */
+    
     protected void updateHealthBar() {
         if (healthBar != null) {
             healthBar.update(health);
@@ -103,7 +122,7 @@ public abstract class Units extends SuperSmoothMover {
         restrictPlayableArea();
     }
 
-    // --- EDGE CHECKING ---
+    
     protected void checkEdges() {
         if (getWorld() == null) return;
 

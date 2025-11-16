@@ -1,89 +1,50 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+import greenfoot.*;
 import java.util.List;
-public class BombEffect extends SuperSmoothMover
+
+public class BombEffect extends Effect
 {
-    //controls the timing
-    private int timer = 0;
-    private int endTime = 180; //when the explosion will end
-    private boolean tickingStarted = false;
+    private int radius;
+    private int explosionDuration = 60; // frames to fade out
+    private boolean exploded = false;
     
-    //tracks if the bomb effect visuals is visible
-    private boolean visible = true; 
-    
-    //controls the properties bomb effect
-    private int baseTransparency = 255;
-    private int radius = 350;
-    private int blinkingInterval = 36;
+    public BombEffect(int radius) {
+        super(radius * 2, radius * 2, new Color(255, 0, 0, 180));
+        this.radius = radius;
 
-    //static GreenfootSound bombticking = new GreenfootSound("bombticking.mp3");
-    
-    public BombEffect()
-    {
-        GreenfootImage warningCircle = new GreenfootImage(radius,radius);
-        warningCircle.setColor((new Color(255,0,0,240)));
-        warningCircle.fillOval(0,0,radius,radius);
-        setImage(warningCircle);
+        // draw initial warning circle
+        GreenfootImage circle = new GreenfootImage(radius * 2, radius * 2);
+        circle.setColor(new Color(255, 0, 0, 180));
+        circle.fillOval(0, 0, radius * 2, radius * 2);
+        setImage(circle);
     }
 
-    public void act()
-    {
-        // increases the timer every frame
-        timer ++;
-        //playTickingSound();
-        createBlinkingEffect();
-        explode();
-        
-    }
-    
-    private void createBlinkingEffect()
-    {
-        //creates an blinking effect before explosion
-        if(timer % blinkingInterval == 0)
-        {
-            visible = !visible;
-            //makes the blinking speed faster as the bomb is about to explode
-            blinkingInterval -= 2;
-            //bombticking.setVolume(60);
-            //bombticking.playLoop();
-            //bombexplosion.stop();
-            //created the blinking effect by changing the transparency after  
-            //a certain period
-            if (visible)
-            {
-                getImage().setTransparency(baseTransparency);
+    @Override
+    protected void updateEffect() {
+        timer++;
+        if (!exploded && timer >= 180) { // explode after warning
+            exploded = true;
+            timer = 0; // reset timer for fade out
+            // damage humans in range
+            List<Human> humans = getObjectsInRange(radius, Human.class);
+            for (Human h : humans) {
+                h.takeDamage(100); // or remove if instant kill
             }
-            else
-            {
-                getImage().setTransparency(0);
-            }
+            Fences.damage(3000); // optional
         }
     }
-    
-    /*private void playTickingSound()
-    {
-        if (!tickingStarted) {
-            bombticking.setVolume(60);
-            bombticking.playLoop();
-            tickingStarted = true;
-        }
-    }*/
-    
-    private void explode()
-    {
-        //when the timer reaches the endtime it will trigger an explosion
-        if(timer >= endTime)
-        {
 
-            //RedFlashEffect redScreen = new RedFlashEffect(1024,800);
-            //getWorld().addObject(redScreen, getWorld().getWidth() / 2, getWorld().getHeight() / 2);
-            
-            //finds all vehicles within the explosion radius
-            List<Human> humanInRange = getObjectsInRange(radius,Human.class);
-            for (Human human : humanInRange) {
-                getWorld().removeObject(human);
+    @Override
+    protected void drawEffect() {
+        if (exploded) {
+            int alpha = Math.max(0, 180 - (180 / explosionDuration) * timer); 
+            GreenfootImage fadeCircle = new GreenfootImage(radius * 2, radius * 2);
+            fadeCircle.setColor(new Color(255, 0, 0, alpha));
+            fadeCircle.fillOval(0, 0, radius * 2, radius * 2);
+            setImage(fadeCircle);
+
+            if (alpha <= 0 && getWorld() != null) {
+                getWorld().removeObject(this);
             }
-            Fences.damage(3000);
-            getWorld().removeObject(this);
         }
     }
 }

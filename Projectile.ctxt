@@ -1,7 +1,7 @@
 #BlueJ class context
 comment0.target=Projectile
-comment1.params=speed\ angle\ damage
-comment1.target=Projectile(double,\ double,\ int)
+comment1.params=speed\ angle\ damage\ owner
+comment1.target=Projectile(double,\ double,\ int,\ Projectile.Owner)
 comment2.params=
 comment2.target=void\ act()
 comment3.params=

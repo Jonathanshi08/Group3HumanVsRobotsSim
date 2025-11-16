@@ -66,7 +66,7 @@ public class RangedHuman extends Human {
         int dy = target.getY() - getY();
         double angle = Math.toDegrees(Math.atan2(dy, dx));
 
-        Projectile shot = new Projectile(projectileSpeed, angle, damage);
+        Projectile shot = new Projectile(projectileSpeed, angle, damage, Projectile.Owner.HUMAN);
         getWorld().addObject(shot, getX(), getY());
     }
 

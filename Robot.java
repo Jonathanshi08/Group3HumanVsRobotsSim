@@ -3,37 +3,17 @@ import java.util.List;
 
 public abstract class Robot extends Units {
     protected int cooldown = 0;
-    protected SuperStatBar hpBar;
-    private static int numRobots = 0;
     protected boolean pendingRemoval = false; // flag for safe removal
-    private int displayedHealth; // for smooth HP bar
+    private static int numRobots = 0;
 
     protected Robot(int health, double speed, int range, int damage, int delay, int value) {
         super(health, speed, range, damage, delay, value, true);
         numRobots++;
-
-        displayedHealth = health;
-        hpBar = new SuperStatBar(health, this);
-    }
-
-    @Override
-    public void addedToWorld(World w) {
-        if (hpBar != null) w.addObject(hpBar, getX(), getY() - 20);
     }
 
     @Override
     public void act() {
         if (getWorld() == null) return;
-
-        // Smoothly update HP bar
-        if (hpBar != null) {
-            if (displayedHealth > getHealth()) {
-                displayedHealth--; // shrink gradually
-            } else if (displayedHealth < getHealth()) {
-                displayedHealth++; // heal gradually if needed
-            }
-            hpBar.update(displayedHealth);
-        }
 
         // Check death
         if (getHealth() <= 0 && !pendingRemoval) {
@@ -52,6 +32,8 @@ public abstract class Robot extends Units {
     protected abstract void attackBehavior();
 
     protected Human getClosestHuman() {
+        if (getWorld() == null) return null;
+
         List<Human> humans = getObjectsInRange(1000, Human.class);
         Human closest = null;
         double minDist = Double.MAX_VALUE;
@@ -80,9 +62,11 @@ public abstract class Robot extends Units {
     }
 
     protected void die() {
-        if (hpBar != null && getWorld() != null) getWorld().removeObject(hpBar);
-        if (getWorld() != null) getWorld().removeObject(this);
-        numRobots--;
+        removeHealthBar(); // inherited from Units, safely removes bar
+        if (getWorld() != null) {
+            getWorld().removeObject(this);
+            numRobots--;
+        }
     }
 
     public static int getNumRobots() {
@@ -91,16 +75,13 @@ public abstract class Robot extends Units {
 
     @Override
     public void takeDamage(int dmg) {
-        super.takeDamage(dmg);
-
-        // Ensure HP bar updates instantly as well
-        if (hpBar != null) hpBar.update(getHealth());
-
+        super.takeDamage(dmg); // updates health and healthBar from Units
         if (getHealth() <= 0 && !pendingRemoval) {
             pendingRemoval = true;
         }
     }
 }
+
 
 
 

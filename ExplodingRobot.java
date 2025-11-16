@@ -84,7 +84,7 @@ public class ExplodingRobot extends Robot {
         if (getWorld() == null) return;
 
         // Explosion effect
-        BombEffect explosion = new BombEffect();
+        BombEffect explosion = new BombEffect(100);
         getWorld().addObject(explosion, getX(), getY());
 
         // Damage all humans in explosion radius

@@ -32,6 +32,9 @@ public class MyWorld extends World {
         
         setBackground(background);
 
+        Turret turret = new Turret();
+        addObject(turret,100,getHeight()/2+50);
+        
         Units.setHumanCash(0);
         Units.setRobotCash(0);
     }
@@ -80,7 +83,7 @@ public class MyWorld extends World {
             MeleeHuman human = new MeleeHuman(100, 2, 40, 20, 40, 10);
             addObject(human, getWidth() - 50, y);
         } else {
-            RangedHuman human = new RangedHuman(80, 2, 400, 15, 40, 10);
+            RangedHuman human = new RangedHuman(80, 2, 400, 30, 40, 10);
             addObject(human, getWidth() - 50, y);
         }
     }
@@ -90,14 +93,16 @@ public class MyWorld extends World {
         int maxY = getHeight() - 1;
         int y = minY + Greenfoot.getRandomNumber(maxY - minY + 1);
 
-        int choice = Greenfoot.getRandomNumber(2);
+        int choice = Greenfoot.getRandomNumber(1);
         if (choice == 0) {
             MeleeRobot robot = new MeleeRobot(150, 2, 40, 10, 40, 10);
             addObject(robot, 50, y);
+        }
+        /*
         } else {
             ExplodingRobot robot = new ExplodingRobot(60, 2, 40, 15, 40, 10);
             addObject(robot, 50, y);
-        }
+        }*/
     }
 }
 
