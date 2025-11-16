@@ -5,14 +5,20 @@ public class MeleeHuman extends Human {
 
     private GreenfootImage idleImage;              
     private GreenfootImage[] walkingFrames = new GreenfootImage[7]; 
-    private GreenfootImage attackImage;
-    private int animationCounter = 0;
-    private int animationSpeed = 5; // acts per frame
+    private GreenfootImage[] attackFrames = new GreenfootImage[3]; // Damage frames
+
+    private int walkAnimationCounter = 0;
+    private int walkAnimationSpeed = 5; // acts per frame
+
+    private int attackFrameIndex = 0;
+    private int attackFrameCounter = 0;
+    private int attackFrameSpeed = 10; // acts per frame
+    private boolean attacking = false;
 
     public MeleeHuman(int health, double speed, int range, int damage, int delay, int value) {
         super(health, speed, range, damage, delay, value);
 
-        // Idle image (frame 0)
+        // Idle image
         idleImage = new GreenfootImage("meeleHuman000.png");
         idleImage.mirrorHorizontally();
         idleImage.scale(65,65);
@@ -25,15 +31,17 @@ public class MeleeHuman extends Human {
             walkingFrames[i-1].scale(65,65);
         }
 
-        // Attack frame
-        attackImage = new GreenfootImage("meeleHuman006.png");
-        attackImage.mirrorHorizontally();
-        attackImage.scale(65,65);
+        // Attack frames 0–2
+        for (int i = 0; i < 3; i++) {
+            attackFrames[i] = new GreenfootImage("humanMeeleAttack00" + i + ".png");
+            attackFrames[i].mirrorHorizontally();
+            attackFrames[i].scale(65,65);
+        }
     }
 
     @Override
     protected void attackBehavior() {
-        // Not used, attack handled in act()
+        // Not used in act()
     }
 
     @Override
@@ -46,31 +54,44 @@ public class MeleeHuman extends Human {
 
             if (distance > range) {
                 // Move toward robot
+                attacking = false;
                 moveToward(target);
                 animateWalking();
             } else {
                 // Attack when touching
-                setImage(attackImage);
-                attackTarget(target);
+                attacking = true;
+                animateAttack(target);
             }
         } else {
             // No target → idle
+            attacking = false;
             setImage(idleImage);
         }
     }
 
-    private void attackTarget(MeleeRobot target) {
-        if (cooldown > 0) cooldown--;
-        else {
+    private void animateAttack(MeleeRobot target) {
+        setImage(attackFrames[attackFrameIndex]);
+
+        // Deal damage only when cooldown allows
+        if (cooldown == 0) {
             target.takeDamage(damage);
             cooldown = delay;
+        } else {
+            cooldown--;
+        }
+
+        // Advance attack frame at controlled speed
+        attackFrameCounter++;
+        if (attackFrameCounter >= attackFrameSpeed) {
+            attackFrameCounter = 0;
+            attackFrameIndex = (attackFrameIndex + 1) % attackFrames.length;
         }
     }
 
     private void animateWalking() {
-        int frame = (animationCounter / animationSpeed) % walkingFrames.length;
+        int frame = (walkAnimationCounter / walkAnimationSpeed) % walkingFrames.length;
         setImage(walkingFrames[frame]);
-        animationCounter++;
+        walkAnimationCounter++;
     }
 
     private void moveToward(MeleeRobot target) {
@@ -104,9 +125,6 @@ public class MeleeHuman extends Human {
         return closest;
     }
 }
-
-
-
 
 
 

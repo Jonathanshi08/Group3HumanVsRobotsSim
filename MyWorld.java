@@ -1,24 +1,20 @@
 import greenfoot.*;
 import greenfoot.Color;  
+import java.util.List;
 
 public class MyWorld extends World {
 
     GreenfootImage background = new GreenfootImage("images/background.png");
     public static int topEdge = 275;
-    public static double robotSpawnMultiplier = 1;
-    public static double humanSpawnMultiplier = 1;
 
-    // Text display images
     private GreenfootImage humanCashImage;
     private GreenfootImage robotCashImage;
 
-    // TOP positions for text (KEPT)
     private int humanCashX = 1065;
     private int humanCashY = 45;
     private int robotCashX = 30;
     private int robotCashY = 45;
 
-    // Spawning variables
     private int frameCount = 0;
     private int spawnInterval = 200;
     private int humanSpawnTimer = 0;
@@ -41,7 +37,7 @@ public class MyWorld extends World {
     }
 
     public void act() {
-        updateCash(); // KEEP THIS (top display)
+        updateCash(); 
 
         humanSpawnTimer++;
         if (humanSpawnTimer >= spawnInterval) {
@@ -54,14 +50,11 @@ public class MyWorld extends World {
             robotSpawnTimer = 0;
             spawnRobots();
         }
-
-        robotSpawnMultiplier = 1;
-        humanSpawnMultiplier = 1;
     }
 
     private void updateCash() {
         GreenfootImage frame = getBackground();
-        frame.drawImage(background, 0, 0); // redraw background
+        frame.drawImage(background, 0, 0); 
 
         humanCashImage = new GreenfootImage(
             "Human Cash: " + Units.getHumanCash(), 
@@ -73,7 +66,6 @@ public class MyWorld extends World {
             24, Color.WHITE, new Color(0, 0, 0, 150)
         );
 
-        // Draw TOP LEFT and TOP RIGHT
         frame.drawImage(robotCashImage, robotCashX, robotCashY);
         frame.drawImage(humanCashImage, humanCashX, humanCashY);
     }
@@ -83,8 +75,14 @@ public class MyWorld extends World {
         int maxY = getHeight() - 1;
         int y = minY + Greenfoot.getRandomNumber(maxY - minY + 1);
 
-        MeleeHuman human = new MeleeHuman(100, 2, 40, 20, 50, 10);
-        addObject(human, getWidth() - 50, y);
+        int choice = Greenfoot.getRandomNumber(2);
+        if (choice == 0) {
+            MeleeHuman human = new MeleeHuman(100, 2, 40, 20, 40, 10);
+            addObject(human, getWidth() - 50, y);
+        } else {
+            RangedHuman human = new RangedHuman(80, 2, 400, 15, 40, 10);
+            addObject(human, getWidth() - 50, y);
+        }
     }
 
     private void spawnRobots() {
@@ -92,7 +90,14 @@ public class MyWorld extends World {
         int maxY = getHeight() - 1;
         int y = minY + Greenfoot.getRandomNumber(maxY - minY + 1);
 
-        MeleeRobot robot = new MeleeRobot(80, 2, 40, 10, 50, 10);
-        addObject(robot, 50, y);
+        int choice = Greenfoot.getRandomNumber(2);
+        if (choice == 0) {
+            MeleeRobot robot = new MeleeRobot(150, 2, 40, 10, 40, 10);
+            addObject(robot, 50, y);
+        } else {
+            ExplodingRobot robot = new ExplodingRobot(60, 2, 40, 15, 40, 10);
+            addObject(robot, 50, y);
+        }
     }
 }
+
