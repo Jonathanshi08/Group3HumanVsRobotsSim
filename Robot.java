@@ -1,7 +1,9 @@
 import greenfoot.*;
-import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Robot extends Units {
+    protected int cooldown = 0;
+    protected boolean pendingRemoval = false; // flag for safe removal
     private static int numRobots = 0;
 
     protected Robot(int health, double speed, int range, int damage, int delay, int value) {
@@ -9,20 +11,61 @@ public abstract class Robot extends Units {
         numRobots++;
     }
 
+    @Override
     public void act() {
-        super.act();
+        if (getWorld() == null) return;
+
+        // Check death
+        if (getHealth() <= 0 && !pendingRemoval) {
+            pendingRemoval = true;
+        }
+
+        // Only act if alive
+        if (!pendingRemoval) {
+            attackBehavior();
+            moveTowardHuman();
+        } else {
+            die();
+        }
     }
 
-    public void attackHumans() {
-        if (cooldown > 0) cooldown--;
-        ArrayList<Human> targets = new ArrayList<>(getObjectsInRange(range, Human.class));
+    protected abstract void attackBehavior();
 
-        if (!targets.isEmpty() && cooldown == 0) {
-            for (Human h : targets) h.takeDamage(damage);
-            cooldown = delay;
-            speed = 0;
-        } else if (targets.isEmpty()) {
-            speed = originalSpeed;
+    protected Human getClosestHuman() {
+        if (getWorld() == null) return null;
+
+        List<Human> humans = getObjectsInRange(1000, Human.class);
+        Human closest = null;
+        double minDist = Double.MAX_VALUE;
+
+        for (Human h : humans) {
+            double dist = getDistanceTo(h);
+            if (dist < minDist) {
+                minDist = dist;
+                closest = h;
+            }
+        }
+        return closest;
+    }
+
+    protected void moveTowardHuman() {
+        Human target = getClosestHuman();
+        if (target != null) {
+            double dx = target.getX() - getX();
+            double dy = target.getY() - getY();
+            double distance = Math.hypot(dx, dy);
+            if (distance > range) {
+                setLocation(getX() + (int)(dx / distance * getSpeed()),
+                            getY() + (int)(dy / distance * getSpeed()));
+            }
+        }
+    }
+
+    protected void die() {
+        removeHealthBar(); // inherited from Units, safely removes bar
+        if (getWorld() != null) {
+            getWorld().removeObject(this);
+            numRobots--;
         }
     }
 
@@ -30,7 +73,16 @@ public abstract class Robot extends Units {
         return numRobots;
     }
 
-    public void removedFromWorld(World world) {
-        numRobots--;
+    @Override
+    public void takeDamage(int dmg) {
+        super.takeDamage(dmg); // updates health and healthBar from Units
+        if (getHealth() <= 0 && !pendingRemoval) {
+            pendingRemoval = true;
+        }
     }
 }
+
+
+
+
+

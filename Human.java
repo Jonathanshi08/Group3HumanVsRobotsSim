@@ -1,36 +1,62 @@
 import greenfoot.*;
-import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Human extends Units {
-    private static int numHumans = 0;
+    protected int cooldown = 0;
 
     protected Human(int health, double speed, int range, int damage, int delay, int value) {
         super(health, speed, range, damage, delay, value, false);
-        numHumans++;
     }
 
+    @Override
     public void act() {
-        super.act();
+        if (getWorld() == null || getHealth() <= 0) return;
+
+        updateHealthBar();
+        attackBehavior();
     }
 
-    public void attackRobots() {
-        if (cooldown > 0) cooldown--;
-        ArrayList<Robot> targets = new ArrayList<>(getObjectsInRange(range, Robot.class));
+    protected abstract void attackBehavior();
 
-        if (!targets.isEmpty() && cooldown == 0) {
-            for (Robot r : targets) r.takeDamage(damage);
-            cooldown = delay;
-            speed = 0;
-        } else if (targets.isEmpty()) {
-            speed = originalSpeed;
+    protected Robot getClosestRobot() {
+        if (getWorld() == null) return null;
+
+        List<Robot> robots = getObjectsInRange(1000, Robot.class);
+        Robot closest = null;
+        double minDist = Double.MAX_VALUE;
+
+        for (Robot r : robots) {
+            double dist = getDistanceTo(r);
+            if (dist < minDist) {
+                minDist = dist;
+                closest = r;
+            }
+        }
+        return closest;
+    }
+
+    protected void moveTowardRobot(Robot target) {
+        if (target == null) return;
+
+        double dx = target.getX() - getX();
+        double dy = target.getY() - getY();
+        double distance = Math.hypot(dx, dy);
+
+        if (distance > range) { // move only if not in attack range
+            setLocation(
+                getX() + (int)(dx / distance * getSpeed()),
+                getY() + (int)(dy / distance * getSpeed())
+            );
         }
     }
 
-    public static int getNumHumans() {
-        return numHumans;
-    }
-
-    public void removedFromWorld(World world) {
-        numHumans--;
+    // If no target, humans can keep moving forward
+    protected void moveForward() {
+        setLocation(getX() + (int)speed, getY());
     }
 }
+
+
+
+
+

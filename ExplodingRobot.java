@@ -1,103 +1,100 @@
 import greenfoot.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ExplodingRobot extends Robot {
+
+    private int explosionRadius = 50;
     private int detectionRange;
-    
-    private double speed;
     private double rushSpeed;
     private boolean rushing = false;
-    
+
+    // Walking animation
     private GreenfootImage[] walkFrames;
-    private int currentFrame = 0;
-    private int animationDelay = 8; 
+    private int frameIndex = 0;
+    private int frameDelay = 5; // number of act() calls per frame
     private int frameCounter = 0;
 
     public ExplodingRobot(int health, double speed, int range, int damage, int delay, int value) {
         super(health, speed, range, damage, delay, value);
-        this.detectionRange = range*2;
+
+        this.detectionRange = range * 2;
         this.rushSpeed = 2.5 * speed;
-        loadWalkFrames();
+
+        loadWalkingFrames();
         setImage(walkFrames[0]);
     }
 
+    private void loadWalkingFrames() {
+        walkFrames = new GreenfootImage[8];
+        for (int i = 0; i < 8; i++) {
+            walkFrames[i] = new GreenfootImage("ExplodingRobotWalking" + (i + 1) + ".png");
+            walkFrames[i].scale(20, 50);
+        }
+    }
 
+    @Override
     public void act() {
-        if (getWorld() == null) return;
-        if (getHealth() <= 0) {
+        super.act();
+
+        if (!pendingRemoval) {
+            attackBehavior();
+            animateWalking();
+        } else {
+            // safely remove after explosion
+            if (getWorld() != null) getWorld().removeObject(this);
+        }
+    }
+
+    private void animateWalking() {
+        frameCounter++;
+        if (frameCounter >= frameDelay) {
+            frameCounter = 0;
+            frameIndex = (frameIndex + 1) % walkFrames.length;
+            setImage(walkFrames[frameIndex]);
+        }
+    }
+
+    @Override
+    protected void attackBehavior() {
+        if (cooldown > 0) cooldown--;
+
+        Human closest = getClosestHuman();
+        if (closest == null) return;
+
+        double dist = getDistanceTo(closest);
+
+        // Explode if human is within explosion radius
+        if (dist <= explosionRadius) {
             explode();
+            pendingRemoval = true;
             return;
         }
 
-        checkFenceAhead();
-        if (getWorld() == null) return;
-        Human closest = getClosestHuman();
-        if (closest != null) {
-            double dist = getDistanceTo(closest);
-
-            if (dist <= range) {
-                explode();
-                return;
-            }
-
-            if (dist <= detectionRange) {
-                turnTowards(closest);
-            }
-        }
-
-        animateWalk();
-        super.act();
-    }
-    
-    private void loadWalkFrames() {
-        walkFrames = new GreenfootImage[8];
-        for (int i = 0; i < 8; i++) {
-            walkFrames[i] = new GreenfootImage("images/ExplodingRobotWalking" + (i + 1) + ".png");
-            walkFrames[i].scale(25, 50); // optional: adjust to fit your world size
-        }
-    }
-
-    private void checkFenceAhead() {
-        if (getWorld() == null) return;
-        // Look a short distance in front of the robot
-        int lookDistance = 40;
-        int checkWidth = 25;
-
-        List<Fences> fencesAhead = getObjectsInRange(lookDistance, Fences.class);
-        if (!fencesAhead.isEmpty()) {
-            rushing = true;
-            setSpeed(speed);
-
-            Fences fence = fencesAhead.get(0);
-            if (isTouching(Fences.class)) {
-                System.out.println("damaged");
-                explode();
-            }
-        } else if (rushing) {
-            // go back to normal speed if no fence ahead
-            rushing = false;
-            setSpeed(speed);
-        }
-    }
-    
-    public void setSpeed(double newSpeed) {
-        this.speed = newSpeed;
-    }
-    
-    private void animateWalk() {
-        frameCounter++;
-        if (frameCounter >= animationDelay) {
-            frameCounter = 0;
-            currentFrame = (currentFrame + 1) % walkFrames.length;
-            setImage(walkFrames[currentFrame]);
+        // Move toward human if within detection range
+        if (dist <= detectionRange) {
+            double dx = closest.getX() - getX();
+            double dy = closest.getY() - getY();
+            double distance = Math.hypot(dx, dy);
+            setLocation(getX() + (int)(dx / distance * getSpeed()),
+                        getY() + (int)(dy / distance * getSpeed()));
         }
     }
 
     private void explode() {
-        BombEffect explosionEffect = new BombEffect();
-        getWorld().addObject(explosionEffect, getX(), getY());
-        //attackHumans();
-        getWorld().removeObject(this);
+        if (getWorld() == null) return;
+
+        // Explosion effect
+        BombEffect explosion = new BombEffect(100);
+        getWorld().addObject(explosion, getX(), getY());
+
+        // Damage all humans in explosion radius
+        List<Human> humans = getObjectsInRange(explosionRadius, Human.class);
+        for (Human h : humans) {
+            h.takeDamage(damage);
+        }
     }
 }
+
+
+
+
