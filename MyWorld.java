@@ -7,20 +7,24 @@ public class MyWorld extends World {
     GreenfootImage background = new GreenfootImage("images/background.png");
     public static int topEdge = 275;
 
+    private GreenfootImage humanCashImage;
+    private GreenfootImage robotCashImage;
+
+    private int humanCashX = 1065;
+    private int humanCashY = 45;
+    private int robotCashX = 30;
+    private int robotCashY = 45;
+
+    private int frameCount = 0;
     private int spawnInterval = 200;
     private int humanSpawnTimer = 0;
     private int robotSpawnTimer = 0;
     
 
-    // Keep original positions for statboards if needed
-    private StatBoard humanStatboard;
-    private StatBoard robotStatboard;
-
     public MyWorld() {    
         super(1240, 700, 1);
 
         setPaintOrder(
-            StatsHUD.class,      // ensure HUD is on top
             SuperStatBar.class, 
             Builders.class,
             Fences.class,
@@ -29,25 +33,17 @@ public class MyWorld extends World {
         
         setBackground(background);
 
-        // Add turrets/canons
         Turret turret = new Turret();
-        addObject(turret, 100, getHeight()/2 + 50);
+        addObject(turret,100,getHeight()/2+50);
         
         Canon canon = new Canon();
-        addObject(canon, getWidth() - 100, getHeight()/2 + 50);
+        addObject(canon,getWidth()-100,getHeight()/2+50);
         
-        // Add statboards
-        humanStatboard = new StatBoard();
-        robotStatboard = new StatBoard();
-        addObject(humanStatboard, 105, 75);
-        addObject(robotStatboard, getWidth() - 105, 75);
+        StatBoard humanStatboard = new StatBoard();
+        StatBoard robotStatboard = new StatBoard();
 
-        // Add HUD actors on top of everything
-        StatsHUD leftHUD = new StatsHUD(true);   // Robots stats
-        addObject(leftHUD, 126, 96);
-
-        StatsHUD rightHUD = new StatsHUD(false); // Humans stats
-        addObject(rightHUD, 1157, 96);
+        addObject(humanStatboard,105, 75);
+        addObject(robotStatboard,getWidth()-105, 75);
 
         Units.setHumanCash(0);
         Units.setRobotCash(0);
@@ -73,13 +69,17 @@ public class MyWorld extends World {
             robotSpawnTimer = 0;
             spawnRobots();
         }
-
-        // Optionally: spawn builder if you want
-        // if (Units.getHumanCash() >= 100 && !fenceExists() && !builderExists()) {
-        //     spawnBuilder();
-        //     Units.setHumanCash(Units.getHumanCash() - 100);
-        // }
+        /*
+        // Spawn builder ONLY if no fence exists AND no builder exists
+        if (Units.getHumanCash() >= 100 && !fenceExists() && !builderExists()) {
+            spawnBuilder();
+            Units.setHumanCash(Units.getHumanCash() - 100);
+        }*/
     }
+
+    // ------------------------------
+    // NEW METHODS
+    // ------------------------------
 
     private boolean fenceExists() {
         return !getObjects(Fences.class).isEmpty();
@@ -93,6 +93,24 @@ public class MyWorld extends World {
         int y = 175;
         Builders builder = new Builders();
         addObject(builder, getWidth() - 100, y);
+    }
+
+    private void updateCash() {
+        GreenfootImage frame = getBackground();
+        frame.drawImage(background, 0, 0); 
+
+        humanCashImage = new GreenfootImage(
+            "Human Cash: " + Units.getHumanCash(), 
+            24, Color.WHITE, new Color(0, 0, 0, 150)
+        );
+
+        robotCashImage = new GreenfootImage(
+            "Robot Cash: " + Units.getRobotCash(),
+            24, Color.WHITE, new Color(0, 0, 0, 150)
+        );
+
+        frame.drawImage(robotCashImage, robotCashX, robotCashY);
+        frame.drawImage(humanCashImage, humanCashX, humanCashY);
     }
 
     private void spawnHumans() {
@@ -119,11 +137,10 @@ public class MyWorld extends World {
         if (choice == 0) {
             MeleeRobot robot = new MeleeRobot(250, 2, 40, 10, 40, 10);
             addObject(robot, 50, y);
-        } else {
+        }
+        else {
             RangedRobot robot = new RangedRobot(100, 2, 400, 15, 40, 10);
             addObject(robot, 50, y);
         }
     }
 }
-
-
