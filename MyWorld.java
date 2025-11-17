@@ -28,6 +28,8 @@ public class MyWorld extends World {
             Robot.class
         );
         
+        
+        
         setBackground(background);
 
         // Add turrets/canons
@@ -50,6 +52,10 @@ public class MyWorld extends World {
         StatsHUD rightHUD = new StatsHUD(false); // Humans stats
         addObject(rightHUD, 1157, 96);
 
+        TerritoryBar territoryBar = new TerritoryBar();
+    addObject(territoryBar, getWidth()/2, 30); // safe position
+
+
         Units.setHumanCash(0);
         Units.setRobotCash(0);
         Human.setTotalHumansSpawned(0);
@@ -62,6 +68,8 @@ public class MyWorld extends World {
         
         frameCount++;
         EndSimWorld.totalTimeElapsed = frameCount;
+
+       
 
         humanSpawnTimer++;
         if (humanSpawnTimer >= spawnInterval) {
@@ -76,10 +84,10 @@ public class MyWorld extends World {
         }
 
         // Optionally: spawn builder if you want
-        // if (Units.getHumanCash() >= 100 && !fenceExists() && !builderExists()) {
-        //     spawnBuilder();
-        //     Units.setHumanCash(Units.getHumanCash() - 100);
-        // }
+        if (Units.getHumanCash() >= 100 && !fenceExists() && !builderExists()) {
+            spawnBuilder();
+            Units.setHumanCash(Units.getHumanCash() - 100);
+         }
     }
 
     private boolean fenceExists() {
