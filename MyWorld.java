@@ -106,12 +106,19 @@ public class MyWorld extends World {
         int maxY = getHeight() - 1;
         int y = minY + Greenfoot.getRandomNumber(maxY - minY + 1);
 
-        int choice = Greenfoot.getRandomNumber(2);
-        if (choice == 0) {
+        int choice = Greenfoot.getRandomNumber(6);
+        if (choice <= 2) {
             MeleeRobot robot = new MeleeRobot(250, 2, 40, 10, 40, 10);
             addObject(robot, 50, y);
-        } else {
+        } 
+        else if (choice <= 4)
+        {
             RangedRobot robot = new RangedRobot(100, 2, 400, 15, 40, 10);
+            addObject(robot, 50, y);
+        }
+        else
+        {
+            ExplodingRobot robot = new ExplodingRobot(250, 2, 400, 15, 40, 10);
             addObject(robot, 50, y);
         }
     }

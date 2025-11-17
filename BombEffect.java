@@ -4,7 +4,7 @@ import java.util.List;
 public class BombEffect extends Effect
 {
     private int radius;
-    private int explosionDuration = 60; // frames to fade out
+    private int explosionDuration = 50; // frames to fade out
     private boolean exploded = false;
     
     public BombEffect(int radius) {

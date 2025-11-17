@@ -25,14 +25,14 @@ public class StatsHUD extends Actor {
 
         if (isLeftSide) {
             text =
+                "ROBOT CASH:    " + Units.robotCash + "\n" + "\n"+ "\n"+
                 "ROBOTS ALIVE:  " + Units.robotsAlive + "\n" + "\n"+ "\n"+
-                "ROBOTS DEAD:   " + Units.robotsDead + "\n" + "\n"+ "\n"+
-                "ROBOT CASH:    " + Units.robotCash;
+                "ROBOTS DEAD:   " + Units.robotsDead;
         } else {
             text =
+                "HUMAN CASH:    " + Units.humanCash + "\n" + "\n"+ "\n"+
                 "HUMANS ALIVE:  " + Units.humansAlive + "\n" + "\n"+ "\n"+
-                "HUMANS DEAD:   " + Units.humansDead + "\n" + "\n"+ "\n"+
-                "HUMAN CASH:    " + Units.humanCash;
+                "HUMANS DEAD:   " + Units.humansDead;
         }
 
         // Panel size
