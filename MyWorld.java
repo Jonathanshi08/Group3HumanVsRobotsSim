@@ -6,10 +6,12 @@ public class MyWorld extends World {
 
     GreenfootImage background = new GreenfootImage("images/background.png");
     public static int topEdge = 275;
+    public static int frameCount = 0;
 
     private int spawnInterval = 200;
     private int humanSpawnTimer = 0;
     private int robotSpawnTimer = 0;
+    
 
     // Keep original positions for statboards if needed
     private StatBoard humanStatboard;
@@ -25,6 +27,8 @@ public class MyWorld extends World {
             Fences.class,
             Robot.class
         );
+        
+        
         
         setBackground(background);
 
@@ -48,11 +52,25 @@ public class MyWorld extends World {
         StatsHUD rightHUD = new StatsHUD(false); // Humans stats
         addObject(rightHUD, 1157, 96);
 
+        TerritoryBar territoryBar = new TerritoryBar();
+    addObject(territoryBar, getWidth()/2, 30); // safe position
+
+
         Units.setHumanCash(0);
         Units.setRobotCash(0);
+        Human.setTotalHumansSpawned(0);
+        Robot.setTotalRobotsSpawned(0);
+        frameCount = 0; 
     }
 
     public void act() {
+    
+        
+        frameCount++;
+        EndSimWorld.totalTimeElapsed = frameCount;
+
+       
+
         humanSpawnTimer++;
         if (humanSpawnTimer >= spawnInterval) {
             humanSpawnTimer = 0;
@@ -66,10 +84,10 @@ public class MyWorld extends World {
         }
 
         // Optionally: spawn builder if you want
-        // if (Units.getHumanCash() >= 100 && !fenceExists() && !builderExists()) {
-        //     spawnBuilder();
-        //     Units.setHumanCash(Units.getHumanCash() - 100);
-        // }
+        if (Units.getHumanCash() >= 100 && !fenceExists() && !builderExists()) {
+            spawnBuilder();
+            Units.setHumanCash(Units.getHumanCash() - 100);
+         }
     }
 
     private boolean fenceExists() {
@@ -106,12 +124,19 @@ public class MyWorld extends World {
         int maxY = getHeight() - 1;
         int y = minY + Greenfoot.getRandomNumber(maxY - minY + 1);
 
-        int choice = Greenfoot.getRandomNumber(2);
-        if (choice == 0) {
+        int choice = Greenfoot.getRandomNumber(6);
+        if (choice <= 2) {
             MeleeRobot robot = new MeleeRobot(250, 2, 40, 10, 40, 10);
             addObject(robot, 50, y);
-        } else {
+        } 
+        else if (choice <= 4)
+        {
             RangedRobot robot = new RangedRobot(100, 2, 400, 15, 40, 10);
+            addObject(robot, 50, y);
+        }
+        else
+        {
+            ExplodingRobot robot = new ExplodingRobot(250, 2, 400, 15, 40, 10);
             addObject(robot, 50, y);
         }
     }

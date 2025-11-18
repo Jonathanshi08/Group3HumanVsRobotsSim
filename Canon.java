@@ -4,7 +4,7 @@ import java.util.List;
 public class Canon extends SuperSmoothMover
 {
     private long lastShotTime = 0;
-    private long cooldown = 2500; // ms between shots
+    private long cooldown = 4000; // ms between shots
     private double projectileSpeed = 8;
     private int projectileDamage = 80;
 
